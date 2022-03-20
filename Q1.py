@@ -15,7 +15,7 @@ over dataset multiple times and update the PageRank value based on equation ment
 """
 
 def author():                                                                                             
-        return "gburdell3" # replace gburdell3 with your Georgia Tech username.                                                                                             
+        return "dcarrasco9" # replace gburdell3 with your Georgia Tech username.                                                                                             
                                                                                               
 def gtid():                                                                                               
     return 987654321 # replace with your GT ID number      
