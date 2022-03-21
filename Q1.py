@@ -1,8 +1,8 @@
+from platform import node
 import numpy as np
 import time
 import argparse
 import sys
-
 """
 Below is code for the PageRank algorithm (power iteration).
 
@@ -18,12 +18,13 @@ def author():
         return "dcarrasco9" # replace gburdell3 with your Georgia Tech username.                                                                                             
                                                                                               
 def gtid():                                                                                               
-    return 987654321 # replace with your GT ID number      
+    return 903263454 # replace with your GT ID number      
 
 class PageRank:
     def __init__(self, edge_file):
 
         self.node_degree = {}
+        self.node_degree_list ={}
         self.max_node_id = 0
         self.edge_file = edge_file
 
@@ -36,23 +37,35 @@ class PageRank:
     """
     Step1: Calculate the out-degree of each node and maximum node_id of the graph.
     Store the out-degree in class variable "node_degree" and maximum node id to "max_node_id".
-    """
-    def calculate_node_degree(self):
-        for source,target in self.read_edge_file(self.edge_file):
+    """            
 
+    def calculate_node_degree(self):
+
+        for source,target in self.read_edge_file(self.edge_file):
         ### Implement your code here
         #############################################
-            pass
+            if source > self.max_node_id:
+                self.max_node_id = source
+
+            if target > self.max_node_id:
+                self.max_node_id = target
+
+
+            if source in self.node_degree:
+                self.node_degree[source] += 1
+                self.node_degree_list[source].append(target)
+            else:
+                self.node_degree[source] = 1
+                self.node_degree_list[source] = list()
+
 
         #############################################
-
-        print("Max node id: {}".format(self.max_node_id))
+        print("Max node id test: {}".format(self.max_node_id))
 
     def get_max_node_id(self):
         return self.max_node_id
 
     def run_pagerank(self, node_weights,  damping_factor=0.85, iterations=10):
-
         pr_values = [1.0 / (self.max_node_id + 1)] * (self.max_node_id + 1)
         start_time = time.time()
         """ 
@@ -67,14 +80,32 @@ class PageRank:
         Use the calculated out-degree to calculate the pagerank value of each node
         """
         for it in range(iterations):
-            
             new_pr_values = [0.0] * (self.max_node_id + 1)
             for source, target in self.read_edge_file(self.edge_file):
-
         ### Implement your code here
         #############################################
-                pass
+                '''
+                PR_t_1(target) = (1 - d) x Pd(target) + d x ∑PR_t(source)/outdegree(source)
+                for each edge (source,target)
+                outdegree(source) is the number of links going out of the source node
+                PR_t_1(target) is the pagerank value of target node at iteration t + 1
+                PR_t is the pagerank value of source node at iteration t
+                d is the damping factor
+                Pd(target) is the probability of random jump
+                
 
+                '''
+                
+                if new_pr_values[source] == 0:
+                    source_prt_t = (1 - damping_factor) * node_weights[source]
+                    new_pr_values[source] = source_prt_t
+                if new_pr_values[target] == 0:
+                    target_prt_t = (1 - damping_factor) * node_weights[target]
+                    new_pr_values[target] = target_prt_t
+
+                prt_t_1 = damping_factor * pr_values[source] / self.node_degree[source]
+                new_pr_values[target] += prt_t_1
+            pr_values = new_pr_values     
         #############################################
 
         print ("Completed {0}/{1} iterations. {2} seconds elapsed.".format(it + 1, iterations, time.time() - start_time))
